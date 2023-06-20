@@ -56,8 +56,9 @@ class _MapScreenState extends State<MapScreen> {
   late Circle circle ;
 
   late Polyline polyline ;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  Map<CircleId, Circle> circles = <CircleId , Circle> {};
+  List<Marker> markers = [];
+  List<Circle> circles = [];
+  List<Polyline> polylines = [];
 
   @override
   void initState() {
@@ -83,9 +84,9 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
    return Scaffold (
      body: GoogleMap(
-       markers: Set<Marker>.of(marker != null ? {marker} : {}),
-       circles: Set<Circle>.of(circle != null ? {circle} : {}),
-       polylines: Set<Polyline>.of(polyline != null ? {polyline} : {}),
+       markers: Set<Marker>.of(marker != null ? [marker] : []),
+       circles: Set<Circle>.of(circle != null ? [circle] : []),
+       polylines: Set<Polyline>.of(polyline != null ? [polyline] : []),
        mapType: MapType.normal,
        initialCameraPosition: MapScreen._kGooglePlex,
        onMapCreated: (GoogleMapController controller) {
@@ -123,8 +124,8 @@ class _MapScreenState extends State<MapScreen> {
        updateLocation(imageData, newLocation);
      });
       setState(() {
-        markers[MarkerId('me')] = marker;
-        circles[CircleId("circle")] = circle ;
+        markers.add(marker);
+        circles.add(circle);
       });
    }
    updateLocation(imageData, location);
