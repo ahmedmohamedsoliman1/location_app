@@ -5,8 +5,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:typed_data';
 
-
-import 'dart:convert';
 void main() {
   runApp(MyApp());
 }
@@ -56,9 +54,11 @@ class _MapScreenState extends State<MapScreen> {
   late Circle circle ;
 
   late Polyline polyline ;
-  List<Marker> markers = [];
-  List<Circle> circles = [];
-  List<Polyline> polylines = [];
+
+  MarkerId markerId = const MarkerId("me");
+  Set<Marker> markers =  {};
+  Set<Circle> circles = {};
+  Set<Polyline> polyLines = {};
 
   @override
   void initState() {
@@ -78,15 +78,18 @@ class _MapScreenState extends State<MapScreen> {
     color: Colors.red ,
     width: 1 ,
     jointType: JointType.round);
+
+    markers.add(marker);
+    circles.add(circle);
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
    return Scaffold (
      body: GoogleMap(
-       markers: Set<Marker>.of(marker != null ? [marker] : []),
-       circles: Set<Circle>.of(circle != null ? [circle] : []),
-       polylines: Set<Polyline>.of(polyline != null ? [polyline] : []),
+       markers: markers,
+       circles: circles,
+       polylines: polyLines,
        mapType: MapType.normal,
        initialCameraPosition: MapScreen._kGooglePlex,
        onMapCreated: (GoogleMapController controller) {
@@ -124,8 +127,6 @@ class _MapScreenState extends State<MapScreen> {
        updateLocation(imageData, newLocation);
      });
       setState(() {
-        markers.add(marker);
-        circles.add(circle);
       });
    }
    updateLocation(imageData, location);
@@ -143,7 +144,8 @@ class _MapScreenState extends State<MapScreen> {
    draggable: false ,
    icon: BitmapDescriptor.fromBytes(imageData) ,
    zIndex: 2 ,
-   rotation: locationData.heading!);
+   rotation: locationData.heading!.toDouble(),
+       anchor: Offset(0.0, 0.2),);
 
    circle = Circle(
    circleId: CircleId("circle") ,
@@ -153,6 +155,11 @@ class _MapScreenState extends State<MapScreen> {
    strokeWidth: 0,
    strokeColor: Colors.transparent,
    center: latLng);
+
+   setState(() {
+     markers.add(marker);
+     circles.add(circle);
+   });
   }
 }
 
